@@ -11,7 +11,7 @@
 @interface PVAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (nonatomic, strong) UIWindow *window;
-
-@property (nonatomic, strong) NSString *shortcutItemMD5;
-
+#if !TARGET_OS_TV
+@property (nonatomic, strong) UIApplicationShortcutItem *shortcutItem;
+#endif
 @end

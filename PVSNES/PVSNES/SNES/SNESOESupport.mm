@@ -205,6 +205,7 @@ void S9xCloseSnapshotFile (STREAM file)
     //fclose(file);
     CLOSE_STREAM(file);
 }
+
 bool S9xPollButton(uint32 id, bool *pressed)
 {
     DLog(@"Poll button");

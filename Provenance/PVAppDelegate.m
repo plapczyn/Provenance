@@ -10,10 +10,6 @@
 #import "PVSettingsModel.h"
 #import "PVControllerManager.h"
 
-#if TARGET_OS_TV
-#import "PVAppConstants.h"
-#endif
-
 @interface PVAppDelegate ()
 
 @end
@@ -26,60 +22,45 @@
 #if !TARGET_OS_TV
     if (NSClassFromString(@"UIApplicationShortcutItem")) {
         UIApplicationShortcutItem *shortcut = launchOptions[UIApplicationLaunchOptionsShortcutItemKey];
-        if ([[shortcut type] isEqualToString:@"kRecentGameShortcut"])
+        if (shortcut)
         {
-            self.shortcutItemMD5 = (NSString *)[shortcut userInfo][@"PVGameHash"];
+            self.shortcutItem = shortcut;
         }
     }
 #endif
-    
 	return YES;
 }
 
-- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<NSString *,id> *)options
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    NSURLComponents *components = [NSURLComponents componentsWithURL:url resolvingAgainstBaseURL:NO];
-
-    if (url && [url isFileURL])
-    {
+	if (url && [url isFileURL])
+	{
 #if TARGET_OS_TV
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
 #else
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 #endif
         NSString *documentsDirectory = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
-        
-        NSString *sourcePath = [url path];
-        NSString *filename = [sourcePath lastPathComponent];
-        NSString *destinationPath = [[documentsDirectory stringByAppendingPathComponent:@"roms"] stringByAppendingPathComponent:filename];
-        
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSError *error = nil;
-        BOOL success = [fileManager moveItemAtPath:sourcePath toPath:destinationPath error:&error];
-        if (!success || error)
-        {
-            DLog(@"Unable to move file from %@ to %@ because %@", sourcePath, destinationPath, [error localizedDescription]);
-        }
-    }
-#if TARGET_OS_TV
-    else if ([components.path isEqualToString:PVGameControllerKey] &&
-             [components.queryItems.firstObject.name isEqualToString:PVGameMD5Key])
-    {
-        self.shortcutItemMD5 = components.queryItems.firstObject.value;
-    }
-#endif
-    
-    return YES;
+		
+		NSString *sourcePath = [url path];
+		NSString *filename = [sourcePath lastPathComponent];
+		NSString *destinationPath = [[documentsDirectory stringByAppendingPathComponent:@"roms"] stringByAppendingPathComponent:filename];
+		
+		NSFileManager *fileManager = [NSFileManager defaultManager];
+		NSError *error = nil;
+		BOOL success = [fileManager moveItemAtPath:sourcePath toPath:destinationPath error:&error];
+		if (!success || error)
+		{
+			DLog(@"Unable to move file from %@ to %@ because %@", sourcePath, destinationPath, [error localizedDescription]);
+		}
+	}
+	
+	return YES;
 }
 
 #if !TARGET_OS_TV
 - (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(nonnull void (^)(BOOL))completionHandler {
-    
-    if ([[shortcutItem type] isEqualToString:@"kRecentGameShortcut"])
-    {
-        self.shortcutItemMD5 = (NSString *)[shortcutItem userInfo][@"PVGameHash"];
-    }
-    
+    self.shortcutItem = shortcutItem;
     completionHandler(YES);
 }
 #endif

@@ -15,7 +15,7 @@ NSString * const kAskToAutoLoadKey = @"kAskToAutoLoadKey";
 NSString * const kDisableAutoLockKey = @"kDisableAutoLockKey";
 NSString * const kButtonVibrationKey = @"kButtonVibrationKey";
 NSString * const kICadeControllerSettingKey = @"kiCadeControllerSettingKey";
-NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
+NSString * const kDPadDeadzoneValueKey = @"kDPadDeadzoneValueKey";
 
 @implementation PVSettingsModel
 
@@ -44,7 +44,7 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
                                                                   kDisableAutoLockKey : @(NO),
                                                                   kButtonVibrationKey : @(YES),
                                                                   kICadeControllerSettingKey : @(kICadeControllerSettingDisabled),
-                                                                  kVolumeSettingKey : @(1.0)}];
+                                                                  kDPadDeadzoneValueKey: @(0.5)}];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 		
 		_autoSave = [[NSUserDefaults standardUserDefaults] boolForKey:kAutoSaveKey];
@@ -53,7 +53,7 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
 		_disableAutoLock = [[NSUserDefaults standardUserDefaults] boolForKey:kDisableAutoLockKey];
         _buttonVibration = [[NSUserDefaults standardUserDefaults] boolForKey:kButtonVibrationKey];
         _iCadeControllerSetting = [[NSUserDefaults standardUserDefaults] integerForKey:kICadeControllerSettingKey];
-        _volume = [[NSUserDefaults standardUserDefaults] floatForKey:kVolumeSettingKey];
+        _dPadDeadzoneValue = [[NSUserDefaults standardUserDefaults] floatForKey:kDPadDeadzoneValueKey];
 	}
 	
 	return self;
@@ -88,6 +88,13 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
 	[[NSUserDefaults standardUserDefaults] synchronize];
 }
 
+- (void)setDPadDeadzoneValue:(float)dPadDeadzoneValue
+{
+    _dPadDeadzoneValue = dPadDeadzoneValue;
+    [[NSUserDefaults standardUserDefaults] setFloat:_dPadDeadzoneValue forKey:kDPadDeadzoneValueKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 - (void)setDisableAutoLock:(BOOL)disableAutoLock
 {
 	_disableAutoLock = disableAutoLock;
@@ -109,12 +116,6 @@ NSString * const kVolumeSettingKey = @"kVolumeSettingKey";
     _iCadeControllerSetting = iCadeControllerSetting;
     [[NSUserDefaults standardUserDefaults] setInteger:iCadeControllerSetting forKey:kICadeControllerSettingKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
-}
-
-- (void)setVolume:(float)volume
-{
-    _volume = volume;
-    [[NSUserDefaults standardUserDefaults] setFloat:volume forKey:kVolumeSettingKey];
 }
 
 @end

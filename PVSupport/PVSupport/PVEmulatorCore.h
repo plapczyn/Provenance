@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "OERingBuffer.h"
-#import <GameController/GameController.h>
 
 @interface PVEmulatorCore : NSObject {
 	
@@ -26,14 +25,10 @@
 }
 
 @property (nonatomic, copy) NSString *romName;
-@property (nonatomic, copy) NSString *saveStatesPath;
 @property (nonatomic, copy) NSString *batterySavesPath;
 @property (nonatomic, copy) NSString *BIOSPath;
 @property (atomic, assign) BOOL shouldResyncTime;
 @property (nonatomic, assign) BOOL fastForward;
-
-@property (nonatomic, strong) GCController *controller1;
-@property (nonatomic, strong) GCController *controller2;
 
 - (void)startEmulation;
 - (void)resetEmulation;
@@ -69,7 +64,6 @@
 - (void)loadSaveFile:(NSString *)path forType:(int)type;
 - (void)writeSaveFile:(NSString *)path forType:(int)type;
 
-- (BOOL)autoSaveState;
 - (BOOL)saveStateToFileAtPath:(NSString *)path;
 - (BOOL)loadStateFromFileAtPath:(NSString *)path;
 

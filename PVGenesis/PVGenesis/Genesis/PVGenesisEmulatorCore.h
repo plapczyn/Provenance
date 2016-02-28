@@ -8,22 +8,21 @@
 
 #import <Foundation/Foundation.h>
 #import "PVEmulatorCore.h"
-#import "libretro.h"
 
 typedef NS_ENUM(NSUInteger, PVGenesisButton)
 {
-    PVGenesisButtonUp = RETRO_DEVICE_ID_JOYPAD_UP,
-    PVGenesisButtonDown = RETRO_DEVICE_ID_JOYPAD_DOWN,
-    PVGenesisButtonLeft = RETRO_DEVICE_ID_JOYPAD_LEFT,
-    PVGenesisButtonRight = RETRO_DEVICE_ID_JOYPAD_RIGHT,
-    PVGenesisButtonA = RETRO_DEVICE_ID_JOYPAD_Y,
-    PVGenesisButtonB = RETRO_DEVICE_ID_JOYPAD_B,
-    PVGenesisButtonC = RETRO_DEVICE_ID_JOYPAD_A,
-    PVGenesisButtonX = RETRO_DEVICE_ID_JOYPAD_L,
-    PVGenesisButtonY = RETRO_DEVICE_ID_JOYPAD_X,
-    PVGenesisButtonZ = RETRO_DEVICE_ID_JOYPAD_R,
-    PVGenesisButtonStart = RETRO_DEVICE_ID_JOYPAD_START,
-    PVGenesisButtonMode = RETRO_DEVICE_ID_JOYPAD_SELECT,
+    PVGenesisButtonUp,
+    PVGenesisButtonDown,
+    PVGenesisButtonLeft,
+    PVGenesisButtonRight,
+    PVGenesisButtonA,
+    PVGenesisButtonB,
+    PVGenesisButtonC,
+    PVGenesisButtonX,
+    PVGenesisButtonY,
+    PVGenesisButtonZ,
+    PVGenesisButtonStart,
+    PVGenesisButtonMode,
     PVGenesisButtonCount,
 };
 

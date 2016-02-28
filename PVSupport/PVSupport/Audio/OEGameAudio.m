@@ -29,8 +29,6 @@
 #import "OERingBuffer.h"
 #import "PVEmulatorCore.h"
 
-@import AVFoundation;
-
 typedef struct
 {
     TPCircularBuffer *buffer;
@@ -126,14 +124,6 @@ OSStatus RenderCallback(void                       *in,
     self = [super init];
     if(self != nil)
     {
-        NSError *error;
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient error:&error];
-        if(error) {
-            NSLog(error);
-        } else {
-            //NSLog(@"Successfully set audio session to ambient");
-        }
-        
         gameCore = core;
         [self createGraph];
     }
@@ -307,11 +297,8 @@ OSStatus RenderCallback(void                       *in,
 - (void)setVolume:(float)aVolume
 {
     volume = aVolume;
-//    NSLog(@"Setting volume to: %f", volume);
-
-    if (mMixerUnit) {
-        AudioUnitSetParameter( mMixerUnit, kMultiChannelMixerParam_Volume, kAudioUnitScope_Input, 0, volume, 0 ) ;
-    }
+    if (mOutputUnit)
+        AudioUnitSetParameter(mOutputUnit, kAudioUnitParameterUnit_LinearGain, kAudioUnitScope_Global, 0, volume, 0);
 }
 
 - (void)volumeUp

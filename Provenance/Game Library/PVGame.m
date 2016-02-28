@@ -22,15 +22,4 @@
              @"systemIdentifier" : @"",};
 }
 
-+ (NSArray<NSString *> *)requiredProperties
-{
-	// All properties are required
-	return @[@"title",
-			 @"romPath",
-			 @"customArtworkURL",
-			 @"originalArtworkURL",
-			 @"md5Hash",
-			 @"systemIdentifier"];
-}
-
 @end

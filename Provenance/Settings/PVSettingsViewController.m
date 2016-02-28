@@ -30,11 +30,11 @@
 	[self.autoSaveSwitch setOn:[settings autoSave]];
 	[self.autoLoadSwitch setOn:[settings autoLoadAutoSaves]];
 	[self.opacitySlider setValue:[settings controllerOpacity]];
+    [self.dPadDeadzoneSlider setValue:[settings dPadDeadzoneValue]];
 	[self.autoLockSwitch setOn:[settings disableAutoLock]];
     [self.vibrateSwitch setOn:[settings buttonVibration]];
-    [self.volumeSlider setValue:[settings volume]];
-    [self.volumeValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.volumeSlider.value * 100]];
     [self.opacityValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.opacitySlider.value * 100]];
+    [self.dPadDeadzoneLabel setText:[NSString stringWithFormat:@"%.0f%%", self.dPadDeadzoneSlider.value * 100]];
     [self.versionLabel setText:[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]];
 #if DEBUG
     [self.modeLabel setText:@"DEBUG"];
@@ -79,6 +79,13 @@
 	[[PVSettingsModel sharedInstance] setControllerOpacity:self.opacitySlider.value];
 }
 
+- (IBAction)dPadDeadzoneChanged:(id)sender {
+    self.dPadDeadzoneSlider.value = floor(self.dPadDeadzoneSlider.value / 0.1) * 0.1;
+    [self.dPadDeadzoneLabel setText:[NSString stringWithFormat:@"%.0f%%", self.dPadDeadzoneSlider.value * 100]];
+
+    [[PVSettingsModel sharedInstance] setDPadDeadzoneValue:self.dPadDeadzoneSlider.value];
+}
+
 - (IBAction)toggleAutoLock:(id)sender
 {
 	[[PVSettingsModel sharedInstance] setDisableAutoLock:[self.autoLockSwitch isOn]];
@@ -88,13 +95,6 @@
 {
     [[PVSettingsModel sharedInstance] setButtonVibration:[self.vibrateSwitch isOn]];
 }
-
-- (IBAction)volumeChanged:(id)sender
-{
-    [[PVSettingsModel sharedInstance] setVolume:self.volumeSlider.value];
-    [self.volumeValueLabel setText:[NSString stringWithFormat:@"%.0f%%", self.volumeSlider.value * 100]];
-}
-
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {

@@ -9,15 +9,12 @@
 #import <Foundation/Foundation.h>
 @import GameController;
 
-@class PViCadeController;
-
 @interface PVControllerManager : NSObject
 
 + (PVControllerManager *)sharedManager;
 
 @property (nonatomic, strong) GCController *player1;
 @property (nonatomic, strong) GCController *player2;
-@property (nonatomic, strong) PViCadeController *iCadeController;
 
 - (BOOL)hasControllers;
 

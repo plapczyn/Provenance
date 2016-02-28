@@ -21,9 +21,4 @@
     return self;
 }
 
-+ (NSArray<NSString *> *)requiredProperties
-{
-	return @[@"lastPlayedDate"];
-}
-
 @end

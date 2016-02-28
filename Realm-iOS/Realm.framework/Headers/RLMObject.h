@@ -44,11 +44,10 @@ RLM_ASSUME_NONNULL_BEGIN
  ### Supported property types
  
  - `NSString`
- - `NSInteger`, `int`, `long`, `float`, and `double`
+ - `NSInteger`, `CGFloat`, `int`, `long`, `float`, and `double`
  - `BOOL` or `bool`
  - `NSDate`
  - `NSData`
- - `NSNumber<X>`, where X is one of RLMInt, RLMFloat, RLMDouble or RLMBool, for optional number properties
  - `RLMObject` subclasses, so you can have many-to-one relationships.
  - `RLMArray<X>`, where X is an `RLMObject` subclass, so you can have many-to-many relationships.
 
@@ -60,7 +59,7 @@ RLM_ASSUME_NONNULL_BEGIN
  
  ### Relationships
  
- See our [Cocoa guide](https://realm.io/docs/objc/latest#relationships) for more details.
+ See our [Cocoa guide](http://realm.io/docs/cocoa/latest) for more details.
 
  ### Key-Value Observing
 
@@ -86,7 +85,10 @@ RLM_ASSUME_NONNULL_BEGIN
 
 @interface RLMObject : RLMObjectBase
 
-#pragma mark - Creating & Initializing Objects
+/**---------------------------------------------------------------------------------------
+ *  @name Creating & Initializing Objects
+ * ---------------------------------------------------------------------------------------
+ */
 
 /**
  Initialize a standalone RLMObject
@@ -108,6 +110,8 @@ RLM_ASSUME_NONNULL_BEGIN
  @see [RLMRealm addObject:]:
  */
 - (instancetype)initWithValue:(id)value NS_DESIGNATED_INITIALIZER;
+
+- (instancetype)initWithObject:(id)object DEPRECATED_MSG_ATTRIBUTE("use initWithValue:");
 
 
 /**
@@ -140,6 +144,8 @@ RLM_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)createInDefaultRealmWithValue:(id)value;
 
++ (instancetype)createInDefaultRealmWithObject:(id)object DEPRECATED_MSG_ATTRIBUTE("use createInDefaultRealmWithValue:");
+
 /**
  Create an RLMObject in a Realm with a given object.
  
@@ -160,6 +166,8 @@ RLM_ASSUME_NONNULL_BEGIN
  @see   defaultPropertyValues
  */
 + (instancetype)createInRealm:(RLMRealm *)realm withValue:(id)value;
+
++ (instancetype)createInRealm:(RLMRealm *)realm withObject:(id)object DEPRECATED_MSG_ATTRIBUTE("use createInRealm:withValue:");
 
 /**
  Create or update an RLMObject in the default Realm with a given object.
@@ -183,6 +191,8 @@ RLM_ASSUME_NONNULL_BEGIN
  @see   defaultPropertyValues, primaryKey
  */
 + (instancetype)createOrUpdateInDefaultRealmWithValue:(id)value;
+
++ (instancetype)createOrUpdateInDefaultRealmWithObject:(id)object DEPRECATED_MSG_ATTRIBUTE("use createOrUpdateInDefaultRealmWithValue:");
 
 /**
  Create or update an RLMObject with a given object.
@@ -208,7 +218,7 @@ RLM_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)createOrUpdateInRealm:(RLMRealm *)realm withValue:(id)value;
 
-#pragma mark - Properties
++ (instancetype)createOrUpdateInRealm:(RLMRealm *)realm withObject:(id)object DEPRECATED_MSG_ATTRIBUTE("use createOrUpdateInRealm:withValue:");
 
 /**
  The Realm in which this object is persisted. Returns nil for standalone objects.
@@ -222,21 +232,23 @@ RLM_ASSUME_NONNULL_BEGIN
 
 /**
  Indicates if an object can no longer be accessed.
- 
- An object can no longer be accessed if the object has been deleted from the containing `realm` or
- if `invalidate` is called on the containing `realm`.
  */
 @property (nonatomic, readonly, getter = isInvalidated) BOOL invalidated;
 
+@property (nonatomic, readonly, getter = isDeletedFromRealm) BOOL deletedFromRealm __attribute__((deprecated("Use `invalidated` instead.")));
 
-#pragma mark - Customizing your Objects
+
+/**---------------------------------------------------------------------------------------
+ *  @name Customizing your Objects
+ * ---------------------------------------------------------------------------------------
+ */
 
 /**
  Return an array of property names for properties which should be indexed. Only supported
  for string and int properties.
  @return    NSArray of property names.
  */
-+ (NSArray RLM_GENERIC(NSString *) *)indexedProperties;
++ (NSArray *)indexedProperties;
 
 /**
  Implement to indicate the default values to be used for each property.
@@ -261,25 +273,26 @@ RLM_ASSUME_NONNULL_BEGIN
  
  @return    NSArray of property names to ignore.
  */
-+ (nullable NSArray RLM_GENERIC(NSString *) *)ignoredProperties;
++ (nullable NSArray *)ignoredProperties;
 
 /**
  Implement to return an array of property names that should not allow storing nil.
 
  By default, all properties of a type that support storing nil are considered optional properties.
- To require that an object in a Realm always have a non-nil value for a property,
- add the name of the property to the array returned from this method.
- 
- Currently Object properties cannot be required. Array and NSNumber properties
- can, but it makes little sense to do so: arrays do not support storing nil, and
- if you want a non-optional number you should instead use the primitive type.
+ To require that an object in a Realm always have a non-nil value for a property, add the name of the property to the array returned from this method.
 
+ Currently only String, Data, and Object properties support storing nil, and all other properties are implicitly treated as if they were required properties.
+ Support for additional types will come in the future.
+ 
  @return    NSArray of property names that are required.
  */
-+ (NSArray RLM_GENERIC(NSString *) *)requiredProperties;
++ (NSArray *)requiredProperties;
 
 
-#pragma mark - Getting & Querying Objects from the Default Realm
+/**---------------------------------------------------------------------------------------
+ *  @name Getting & Querying Objects from the Default Realm
+ *  ---------------------------------------------------------------------------------------
+ */
 
 /**
  Get all objects of this type from the default Realm.
@@ -296,9 +309,6 @@ RLM_ASSUME_NONNULL_BEGIN
  @return    An RLMResults of objects of the subclass type in the default Realm that match the given predicate
  */
 + (RLMResults *)objectsWhere:(NSString *)predicateFormat, ...;
-
-/// :nodoc:
-+ (RLMResults *)objectsWhere:(NSString *)predicateFormat args:(va_list)args;
 
 
 /**
@@ -325,7 +335,10 @@ RLM_ASSUME_NONNULL_BEGIN
 + (nullable instancetype)objectForPrimaryKey:(nullable id)primaryKey;
 
 
-#pragma mark - Querying Specific Realms
+/**---------------------------------------------------------------------------------------
+ *  @name Querying Specific Realms
+ *  ---------------------------------------------------------------------------------------
+ */
 
 /**
  Get all objects of this type from the specified Realm.
@@ -345,9 +358,6 @@ RLM_ASSUME_NONNULL_BEGIN
  @return    An RLMResults of objects of the subclass type in the specified Realm that match the given predicate
  */
 + (RLMResults *)objectsInRealm:(RLMRealm *)realm where:(NSString *)predicateFormat, ...;
-
-/// :nodoc:
-+ (RLMResults *)objectsInRealm:(RLMRealm *)realm where:(NSString *)predicateFormat args:(va_list)args;
 
 /**
  Get objects matching the given predicate for this type from the specified Realm.
@@ -373,16 +383,14 @@ RLM_ASSUME_NONNULL_BEGIN
  */
 + (nullable instancetype)objectInRealm:(RLMRealm *)realm forPrimaryKey:(nullable id)primaryKey;
 
-#pragma mark - Other Instance Methods
-
 /**
  Get an `NSArray` of objects of type `className` which have this object as the given property value. This can
- be used to get the inverse relationship value for `RLMObject` and `RLMArray` properties.
+ be used to get the inverse relatshionship value for `RLMObject` and `RLMArray` properties.
 
  @param className   The type of object on which the relationship to query is defined.
  @param property    The name of the property which defines the relationship.
 
- @return    An NSArray of objects of type `className` which have this object as their value for the `property` property.
+ @return    An NSArray of objects of type `className` which have this object as thier value for the `property` property.
  */
 - (NSArray *)linkingObjectsOfClass:(NSString *)className forProperty:(NSString *)property;
 
@@ -397,22 +405,32 @@ RLM_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)isEqualToObject:(RLMObject *)object;
 
-#pragma mark - Dynamic Accessors
+#pragma mark -
 
-/// :nodoc:
+//---------------------------------------------------------------------------------------
+// @name Dynamic Accessors
+//---------------------------------------------------------------------------------------
+//
+// Properties on RLMObjects can be accessed and set using keyed subscripting.
+// ie. rlmObject[@"propertyName"] = object;
+//     id object = rlmObject[@"propertyName"];
+//
+
 - (nullable id)objectForKeyedSubscript:(NSString *)key;
-
-/// :nodoc:
 - (void)setObject:(nullable id)obj forKeyedSubscript:(NSString *)key;
+
+#pragma mark -
 
 @end
 
-#pragma mark - RLMArray Property Declaration
-
+/**---------------------------------------------------------------------------------------
+ *  @name RLMArray Property Declaration
+ *  ---------------------------------------------------------------------------------------
+ */
 /**
  Properties on RLMObjects of type RLMArray must have an associated type. A type is associated
  with an RLMArray property by defining a protocol for the object type which the RLMArray will
- hold. To define the protocol for an object you can use the macro RLM_ARRAY_TYPE:
+ hold. To define an protocol for an object you can use the macro RLM_ARRAY_TYPE:
  
      RLM_ARRAY_TYPE(ObjectType)
      ...

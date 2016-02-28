@@ -114,28 +114,111 @@
     [gbaCore releaseGBAButton:[button tag] forPlayer:0];
 }
 
-- (void)pressStartForPlayer:(NSUInteger)player
+- (void)controllerPressedButton:(PVControllerButton)button forPlayer:(NSInteger)player
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
-    [gbaCore pushGBAButton:PVGBAButtonStart forPlayer:player];
+
+    switch (button) {
+        case PVControllerButtonA:
+            [gbaCore pushGBAButton:PVGBAButtonB forPlayer:player];
+            break;
+        case PVControllerButtonB:
+            [gbaCore pushGBAButton:PVGBAButtonA forPlayer:player];
+            break;
+        case PVControllerButtonLeftShoulder:
+            [gbaCore pushGBAButton:PVGBAButtonL forPlayer:player];
+            break;
+        case PVControllerButtonRightShoulder:
+            [gbaCore pushGBAButton:PVGBAButtonR forPlayer:player];
+            break;
+        case PVControllerButtonX:
+        case PVControllerButtonLeftTrigger:
+            [gbaCore pushGBAButton:PVGBAButtonStart forPlayer:player];
+            break;
+        case PVControllerButtonY:
+        case PVControllerButtonRightTrigger:
+            [gbaCore pushGBAButton:PVGBAButtonSelect forPlayer:player];
+            break;
+        default:
+            break;
+    }
 }
 
-- (void)releaseStartForPlayer:(NSUInteger)player
+- (void)controllerReleasedButton:(PVControllerButton)button forPlayer:(NSInteger)player
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
-    [gbaCore releaseGBAButton:PVGBAButtonStart forPlayer:player];
+    
+    switch (button) {
+        case PVControllerButtonA:
+            [gbaCore releaseGBAButton:PVGBAButtonB forPlayer:player];
+            break;
+        case PVControllerButtonB:
+            [gbaCore releaseGBAButton:PVGBAButtonA forPlayer:player];
+            break;
+        case PVControllerButtonLeftShoulder:
+            [gbaCore releaseGBAButton:PVGBAButtonL forPlayer:player];
+            break;
+        case PVControllerButtonRightShoulder:
+            [gbaCore releaseGBAButton:PVGBAButtonR forPlayer:player];
+            break;
+        case PVControllerButtonX:
+        case PVControllerButtonLeftTrigger:
+            [gbaCore releaseGBAButton:PVGBAButtonStart forPlayer:player];
+            break;
+        case PVControllerButtonY:
+        case PVControllerButtonRightTrigger:
+            [gbaCore releaseGBAButton:PVGBAButtonSelect forPlayer:player];
+            break;
+        default:
+            break;
+    }
 }
 
-- (void)pressSelectForPlayer:(NSUInteger)player
+- (void)controllerDirectionValueChanged:(GCControllerDirectionPad *)dpad forPlayer:(NSInteger)player
 {
     PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
-    [gbaCore pushGBAButton:PVGBAButtonSelect forPlayer:player];
-}
 
-- (void)releaseSelectForPlayer:(NSUInteger)player
-{
-    PVGBAEmulatorCore *gbaCore = (PVGBAEmulatorCore *)self.emulatorCore;
-    [gbaCore releaseGBAButton:PVGBAButtonSelect forPlayer:player];
+    float xAxis = [[dpad xAxis] value];
+    float yAxis = [[dpad yAxis] value];
+    float deadzone = [[PVSettingsModel sharedInstance] dPadDeadzoneValue];
+
+    if (xAxis > deadzone || xAxis < -deadzone)
+    {
+        if (xAxis > deadzone)
+        {
+            [gbaCore pushGBAButton:PVGBAButtonRight forPlayer:player];
+            [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:player];
+        }
+        else if (xAxis < -deadzone)
+        {
+            [gbaCore pushGBAButton:PVGBAButtonLeft forPlayer:player];
+            [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:player];
+        }
+    }
+    else
+    {
+        [gbaCore releaseGBAButton:PVGBAButtonRight forPlayer:player];
+        [gbaCore releaseGBAButton:PVGBAButtonLeft forPlayer:player];
+    }
+    
+    if (yAxis > deadzone || yAxis < -deadzone)
+    {
+        if (yAxis > deadzone)
+        {
+            [gbaCore pushGBAButton:PVGBAButtonUp forPlayer:player];
+            [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:player];
+        }
+        else if (yAxis < -deadzone)
+        {
+            [gbaCore pushGBAButton:PVGBAButtonDown forPlayer:player];
+            [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:player];
+        }
+    }
+    else
+    {
+        [gbaCore releaseGBAButton:PVGBAButtonDown forPlayer:player];
+        [gbaCore releaseGBAButton:PVGBAButtonUp forPlayer:player];
+    }
 }
 
 @end
