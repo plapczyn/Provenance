@@ -28,8 +28,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *versionLabel;
 @property (weak, nonatomic) IBOutlet UILabel *modeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *iCadeControllerSetting;
-@property (weak, nonatomic) IBOutlet UISlider *dPadDeadzoneSlider;
-@property (weak, nonatomic) IBOutlet UILabel *dPadDeadzoneLabel;
+@property (weak, nonatomic) IBOutlet UISlider *volumeSlider;
+@property (weak, nonatomic) IBOutlet UILabel *volumeValueLabel;
 
 @property (nonatomic, strong) PVGameImporter *gameImporter;
 
